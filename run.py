@@ -17,7 +17,7 @@ MISS = "*"
 
 class GameBoard:
     """Creates a game board object"""
-
+    grid = []
     def __init__(self, board_dimension):
         """Initialises Game Board object based on dimensions provided taking board dimension allow dynamic boards"""
 
@@ -49,26 +49,32 @@ class GameBoard:
         """
         stores inputs as a list of lists
         ensures the largest row or column is last in the list
-        all ships are at least 2 units long so one will always have a greater value.
+        all ships are at least 2 units long so one will always have a greater value
+        expects values as low as 1 and as high as board dimension
         """
-
         ship = [[starting_row, starting_column], [end_row, end_column]]
-        if ship[0][0] > ship[1][0]:
-            ship[0], ship[1] = ship[1], ship[0]
-        elif ship[1][0] > ship[1][1]:
-            ship[0], ship[1] = ship[1], ship[0]
-            #  Now the ship list is ordered with the second list being place at index [1]
-
+        ship = self.order_ship_highest_last(ship)
         ship_length = ship[1][0] - ship[0][0] + ship[1][1] - ship[0][1]
         #  the matching pair negate so the difference between the unique values is found
         if ship[0][1] != ship[0][0]:
             while ship_length > 0:
-                self.update_game_board(ship[0][0], ship[0][1] - ship_length, SHIP)
+                self.update_game_board(ship[0][0], ship[0][1] - ship_length, "@")
                 ship_length -= 1
         else:
             while ship_length > 0:
-                self.update_game_board(ship[1][1] - ship_length, ship[1][0], SHIP)
+                self.update_game_board(ship[1][1] - ship_length, ship[1][0], "@")
                 ship_length -= 1
+
+    @staticmethod
+    def order_ship_highest_last(ship_to_examine):
+        """
+        Compares a list of two coordinates and determines the coordinate with the greatest value
+        the places it last in the list
+        """
+        ship = ship_to_examine
+        if ship[0][0] > ship[1][0] or ship[1][0] > ship[1][1]:
+            ship[0], ship[1] = ship[1], ship[0]
+        return ship
 
 
 class Player:
@@ -77,6 +83,7 @@ class Player:
     def __init__(self, name):
         self.name = name
         self.myBoard = GameBoard(5)
+        self.myBoard.place_ship(0,1,0,4)
 
 
 def main():
@@ -84,3 +91,9 @@ def main():
 
     player1 = Player("test name one")
     player2 = Player("test opponent")
+    player1.myBoard.print_game_board()
+    player2.myBoard.print_game_board()
+
+
+main()
+
