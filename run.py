@@ -17,13 +17,13 @@ MISS = "*"
 
 class GameBoard:
     """Creates a game board object"""
-    grid = []
+    grid = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
     def __init__(self, board_dimension):
         """Initialises Game Board object based on dimensions provided taking board dimension allow dynamic boards"""
 
         self.board_dimension = board_dimension
-        self.grid = [EMPTY for i in range(self.board_dimension * self.board_dimension)]
+        #  self.grid = [EMPTY for i in range(self.board_dimension ** 2)]
         print(self.grid)
 
     def print_game_board(self):
@@ -39,11 +39,8 @@ class GameBoard:
     def update_game_board(self, row, column, new_value):
         """Updates a value at a specific coordinate on the game board"""
         row -= 1
-        if row <= 1:
-            self.grid[row * self.board_dimension + column - 1] = new_value
-        else:
-            self.grid[(row * self.board_dimension) + column - 1] = new_value
-        print(self.grid)
+        column -= 1
+        self.grid[row + self.board_dimension * column] = new_value
 
     def place_ship(self, starting_row, starting_column, end_row, end_column):
         """
@@ -65,19 +62,25 @@ class GameBoard:
         the places it last in the list
         """
         ship = ship_to_examine
-        if ship[0][0] > ship[1][0] or ship[1][0] > ship[1][1]:
-            ship[0], ship[1] = ship[1], ship[0]
-        return ship
+        if ship[0][0] > ship[1][0] or ship[0][1] > ship[1][1]:
+            returned_ship = [ship[1], ship[0]]
+        else:
+            returned_ship = ship
+        return returned_ship
 
     def place_ship_on_game_board(self, ship, ship_length):
+        """Places a ship on the player's game board"""
 
-        if ship[0][0] != ship[0][1]:  # check if ship columns are different
-            while ship_length > 0:
-                self.update_game_board(ship[0][0], ship[0][1] - ship_length, SHIP)
+        ship_column_short = ship[0][1]
+        ship_row_long = ship[1][0]
+        ship_column_long = ship[1][1]
+        if ship_column_short != ship_column_long:  # check if ship columns are different
+            while ship_length >= 0:
+                self.update_game_board(ship_row_long, ship_column_long-ship_length, SHIP)
                 ship_length -= 1
         else:  # applies if rows are different
-            while ship_length > 0:
-                self.update_game_board(ship[1][1] - ship_length, ship[1][0], SHIP)
+            while ship_length >= 0:
+                self.update_game_board(ship_row_long-ship_length, ship_column_long, SHIP)
                 ship_length -= 1
 
 
@@ -86,8 +89,8 @@ class Player:
 
     def __init__(self, name):
         self.name = name
-        self.myBoard = GameBoard(5)
-        self.myBoard.place_ship(0, 1, 0, 4)
+        self.myBoard = GameBoard(3)
+        self.myBoard.place_ship(3, 2, 1, 2)
 
 
 def main():
