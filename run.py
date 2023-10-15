@@ -38,12 +38,6 @@ class GameBoard:
         all ships are at least 2 units long so one will always have a greater value
         expects values as low as 1 and as high as board dimension
         """
-        ship = [[starting_row, starting_column], [end_row, end_column]]
-        ship = self.order_ship_highest_last(ship)
-        ship_length = ship[1][0] - ship[0][0] + ship[1][1] - ship[0][1]
-        #  the matching pair negate so the difference between the unique values is found
-        self.place_ship_on_game_board(ship, ship_length)
-
 
     def place_ship_on_game_board(self, ship, ship_length):
         """Places a ship on the player's game board"""
@@ -59,9 +53,6 @@ class GameBoard:
             while ship_length >= 0:
                 self.update_game_board(ship_row_long-ship_length, ship_column_long, SHIP)
                 ship_length -= 1
-
-    def check_if_legal_ship(self):
-        return None
 
     def check_if_hit(self, row, column):
         """
@@ -97,11 +88,8 @@ class Ship:
     def __init__(self, starting_row, starting_column, end_row, end_column):
         self.my_ship = [[starting_row, starting_column], [end_row, end_column]]
         self.my_ship = self.order_ship_highest_last()
-
-    def determine_ship_length(self):
-        """adds in-between coordinates to a ship list"""
-        ship = self.my_ship
-        self.ship_length = ship[1][0] - ship[0][0] + ship[1][1] - ship[0][1]
+        self.create_in_between_coordinates()
+        self.ship_length = self.my_ship.len()
 
     def order_ship_highest_last(self):
         """
@@ -115,6 +103,9 @@ class Ship:
         return returned_ship
 
     def create_in_between_coordinates(self):
+        """
+        Creates in between coordinates and adds them to the my_ship list
+        """
         new_ship = []
         new_ship += self.my_ship[0]
         if self.my_ship[0][0] != self.my_ship[1][0]:
