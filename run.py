@@ -1,13 +1,3 @@
-# Your code goes here.
-# You can delete these comments, but do not change the name of this file
-# Write your code to expect a terminal of 80 characters wide and 24 rows high
-
-# generate board objects for both players
-# populate ships
-# determine starting player
-# take user input
-# return results
-
 """These constants are used for the game output"""
 SHIP = "@"
 EMPTY = "."
@@ -54,18 +44,6 @@ class GameBoard:
         #  the matching pair negate so the difference between the unique values is found
         self.place_ship_on_game_board(ship, ship_length)
 
-    @staticmethod
-    def order_ship_highest_last(ship_to_examine):
-        """
-        Compares a list of two coordinates and determines the coordinate with the greatest value
-        the places it last in the list
-        """
-        ship = ship_to_examine
-        if ship[0][0] > ship[1][0] or ship[0][1] > ship[1][1]:
-            returned_ship = [ship[1], ship[0]]
-        else:
-            returned_ship = ship
-        return returned_ship
 
     def place_ship_on_game_board(self, ship, ship_length):
         """Places a ship on the player's game board"""
@@ -109,6 +87,46 @@ class GameBoard:
         row -= 1
         column -= 1
         return row + self.board_dimension * column
+
+
+class Ship:
+
+    my_ship = []
+    ship_length = 0
+
+    def __init__(self, starting_row, starting_column, end_row, end_column):
+        self.my_ship = [[starting_row, starting_column], [end_row, end_column]]
+        self.my_ship = self.order_ship_highest_last()
+
+    def determine_ship_length(self):
+        """adds in-between coordinates to a ship list"""
+        ship = self.my_ship
+        self.ship_length = ship[1][0] - ship[0][0] + ship[1][1] - ship[0][1]
+
+    def order_ship_highest_last(self):
+        """
+        Compares a list of two coordinates and determines the coordinate with the greatest value
+        the places it last in the list
+        """
+        ship = self.my_ship
+        returned_ship = ship
+        if ship[0][0] > ship[1][0] or ship[0][1] > ship[1][1]:
+            returned_ship = [ship[1], ship[0]]
+        return returned_ship
+
+    def create_in_between_coordinates(self):
+        new_ship = []
+        new_ship += self.my_ship[0]
+        if self.my_ship[0][0] != self.my_ship[1][0]:
+            #  create new list that contains start, end and adds inbetweens
+            for coordinate in range(self.my_ship[0][0], self.my_ship[1][0]):
+                new_coordinate = [coordinate,self.my_ship[0][1]]
+                new_ship += new_coordinate
+        else:
+            for coordinate in range(self.my_ship[0][1], self.my_ship[1][1]):
+                new_coordinate = [self.my_ship[0][0], coordinate]
+                new_ship += new_coordinate
+        self.my_ship = new_ship
 
 
 class Player:
